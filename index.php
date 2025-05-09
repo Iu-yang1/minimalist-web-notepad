@@ -56,6 +56,10 @@ if (isset($_GET['raw']) || strpos($_SERVER['HTTP_USER_AGENT'], 'curl') === 0 || 
 <title><?php print htmlspecialchars($note_name, ENT_QUOTES, 'UTF-8'); ?></title>
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
+<!-- Added Google Fonts for Outfit -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
 <style>
 body {
     margin: 0;
@@ -63,6 +67,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    font-family: "Outfit", sans-serif; /* Use Outfit font */
 }
 #status-bar {
     padding: 8px 20px;
@@ -101,9 +106,12 @@ body {
     border: 1px solid #ddd;
     outline: none;
     flex-grow: 1;
+    font-family: "Outfit", sans-serif; /* Ensure textarea also uses Outfit, though it should inherit */
+    font-size: 1rem; /* Optional: Adjust font size for readability */
 }
 #printable {
     display: none;
+    font-family: "Outfit", sans-serif; /* Ensure printable area also uses Outfit */
 }
 footer {
     padding: 10px 20px;
@@ -149,6 +157,7 @@ footer a:hover {
         display: block;
         white-space: pre-wrap;
         word-break: break-word;
+        font-family: "Outfit", sans-serif; /* Ensure Outfit for print too */
     }
 }
 </style>
