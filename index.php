@@ -83,8 +83,11 @@ body {
     align-items: center; /* Vertically align items */
 }
 #status-bar .note-title {
-    /* Styles for the note title if needed, e.g., font-weight */
     font-weight: bold;
+    margin-right: auto; /* Pushes cursor-pos and save-status to the right */
+}
+#status-bar .cursor-pos {
+    margin-right: 15px; /* Space between cursor pos and save status */
 }
 #status-bar .save-status {
     /* Styles for the save status if needed */
@@ -166,6 +169,7 @@ footer a:hover {
 
 <div id="status-bar">
     <span class="note-title">Note: <?php print htmlspecialchars($note_name, ENT_QUOTES, 'UTF-8'); ?></span>
+    <span class="cursor-pos">Lines: 1, Cols: 1</span>
     <span class="save-status">Saved</span>
 </div>
 
@@ -185,6 +189,12 @@ if (is_file($path)) {
 </footer>
 
 <script>
+var textarea = document.getElementById('content');
+var printable = document.getElementById('printable');
+var saveStatusElement = document.querySelector('#status-bar .save-status');
+var cursorPosElement = document.querySelector('#status-bar .cursor-pos'); // Get cursor position span
+var content = textarea.value;
+
 function uploadContent() {
     if (content !== textarea.value) {
         var temp = textarea.value;
@@ -217,10 +227,24 @@ function uploadContent() {
     }
 }
 
-var textarea = document.getElementById('content');
-var printable = document.getElementById('printable');
-var saveStatusElement = document.querySelector('#status-bar .save-status'); // Get save status span
-var content = textarea.value;
+function updateCursorDisplay() {
+    const text = textarea.value;
+    const cursorPosition = textarea.selectionStart;
+    
+    // Calculate line number
+    // Count newlines before the cursor position + 1 for 1-based indexing
+    const textBeforeCursor = text.substring(0, cursorPosition);
+    const lineNumber = (textBeforeCursor.match(/\n/g) || []).length + 1;
+    
+    // Calculate column number
+    // Find the last newline before the cursor. If none, it's cursorPosition + 1.
+    // Otherwise, it's cursorPosition - last newline index.
+    const lastNewlineIndex = textBeforeCursor.lastIndexOf('\n');
+    const columnNumber = (lastNewlineIndex === -1) ? cursorPosition + 1 : cursorPosition - lastNewlineIndex;
+    
+    cursorPosElement.textContent = `Lines: ${lineNumber}, Cols: ${columnNumber}`;
+}
+
 
 if (content) {
     printable.appendChild(document.createTextNode(content));
@@ -232,9 +256,17 @@ textarea.addEventListener('input', function() {
     if (textarea.value !== content && saveStatusElement.textContent === 'Saved') {
         saveStatusElement.textContent = 'Unsaved changes';
     }
+    updateCursorDisplay(); // Update on input
 });
 
+// Also update cursor display on keyup (for arrow keys, etc.) and click
+textarea.addEventListener('keyup', updateCursorDisplay);
+textarea.addEventListener('click', updateCursorDisplay);
+textarea.addEventListener('focus', updateCursorDisplay); // Update when textarea gets focus
+
+
 textarea.focus();
+updateCursorDisplay(); // Initial call to set cursor position
 uploadContent();
 </script>
 </body>
